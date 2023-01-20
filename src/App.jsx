@@ -1,22 +1,29 @@
-import "./App.css";
-import logo from "./logo.svg";
+import { Button, Image, Spinner, VStack } from "@chakra-ui/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getDog } from "./api";
 
 function App() {
+  const { data, isLoading } = useQuery(["dog"], getDog);
+  const queryClient = useQueryClient();
+  const onClick = () => {
+    queryClient.refetchQueries(["dog"]);
+  };
   return (
-    <div className="App" role="main">
-      <article className="App-article">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h3>Welcome to React!</h3>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </article>
-    </div>
+    <VStack mt={100}>
+      <Button mb={5} onClick={onClick}>
+        Dog!
+      </Button>
+      {isLoading ? (
+        <Spinner size={"lg"} />
+      ) : (
+        <Image
+          objectFit={"cover"}
+          h={"300px"}
+          w={"300px"}
+          src={data?.message}
+        />
+      )}
+    </VStack>
   );
 }
 
